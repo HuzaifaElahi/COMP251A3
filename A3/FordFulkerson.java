@@ -105,20 +105,19 @@ public class FordFulkerson {
 				}
 			}
 
-			// If no path found
+			// Check if path from s to t exists in residual graph
 			ArrayList<Integer> nodesResidual = pathDFS(source, destination, residue);
-			for(Edge e : edgesGraphF) {
-				maxFlow = Math.max(maxFlow, e.weight);
-			}
+		
+			// If no path found
 			if(nodesResidual == null) {
 				System.out.println(-1);
+				graph=graphF;
 				break;
 			}
 
 			ArrayList<Edge> residueEdges = residue.getEdges();
-			
 			bottleNeck = 9999;
-			
+		
 			// Find bottleneck
 			for(Edge e : residueEdges) {
 				bottleNeck = Math.min(bottleNeck, e.weight);
@@ -137,6 +136,12 @@ public class FordFulkerson {
 					graphF.getEdge(e.nodes[0], e.nodes[1]).weight += e.weight ;
 				} else if(backward.contains(e)) {
 					graphF.getEdge(e.nodes[1], e.nodes[0]).weight -= e.weight ;
+				}
+			}
+			maxFlow = 0;
+			for(int i =0; i < destination; i++) {
+				if(graphF.getEdge(0, i)!= null) {
+					maxFlow+=graphF.getEdge(0, i).weight;
 				}
 			}
 			
