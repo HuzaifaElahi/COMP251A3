@@ -43,7 +43,7 @@ public class FordFulkerson {
 					start = Stack.get(Stack.size()-1);
 				}
 			}
-			
+
 			// If not at end: continue, else exit
 			if(start != destination) {
 				foundEdge = false;
@@ -90,13 +90,6 @@ public class FordFulkerson {
 			Edge edge = graphF.getEdge(nodes.get(i), nodes.get(i+1)) ;
 			edge.weight = bottleNeck;
 		}
-		
-		maxFlow = 0;
-		for(int i = 0; i < graphF.getNbNodes(); i++) {
-			if(graphF.getEdge(source, i)!= null) {
-				maxFlow+=graphF.getEdge(source, i).weight;
-			}
-		}
 
 		while(true) {
 
@@ -111,15 +104,23 @@ public class FordFulkerson {
 				// Forward edge
 				if(e.weight < graph.getEdge(e.nodes[0], e.nodes[1]).weight) {
 					Edge forwardEdge = new Edge(e.nodes[0], e.nodes[1],(graph.getEdge(e.nodes[0], e.nodes[1]).weight - e.weight));
-					residue.addEdge(forwardEdge);
-					forward.add(forwardEdge);
+					if(residue.getEdge(forwardEdge.nodes[0], forwardEdge.nodes[1])==null) {
+						residue.addEdge(forwardEdge);
+						forward.add(forwardEdge);
+					}else {
+						residue.getEdge(forwardEdge.nodes[0], forwardEdge.nodes[1]).weight = graph.getEdge(e.nodes[0], e.nodes[1]).weight - e.weight;
+					}
 				}
 
 				// Backward edge
 				if(e.weight > 0) {
 					Edge backwardEdge = new Edge(e.nodes[1], e.nodes[0],(e.weight));
-					residue.addEdge(backwardEdge);
-					backward.add(backwardEdge);
+					if(residue.getEdge(backwardEdge.nodes[0], backwardEdge.nodes[1])==null) {
+						residue.addEdge(backwardEdge);
+						backward.add(backwardEdge);
+					} else {
+						residue.getEdge(backwardEdge.nodes[0], backwardEdge.nodes[1]).weight = e.weight; 
+					}
 				}
 			}
 
@@ -163,14 +164,6 @@ public class FordFulkerson {
 					// Backward edge
 				} else if(backward.contains(e)) {  
 					graphF.getEdge(e.nodes[1], e.nodes[0]).weight -= e.weight ;
-				}
-			}
-
-			// Find maxFlow : flow out of source
-			maxFlow = 0;
-			for(int i =0; i < graphF.getNbNodes(); i++) {
-				if(graphF.getEdge(source, i)!= null) {
-					maxFlow+=graphF.getEdge(source, i).weight;
 				}
 			}
 
