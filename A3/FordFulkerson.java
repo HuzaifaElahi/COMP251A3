@@ -72,7 +72,9 @@ public class FordFulkerson {
 		// If no path found
 		ArrayList<Integer> nodes = pathDFS(source, destination, graph);
 		if(nodes == null) {
-			System.out.println(-1);
+			answer += maxFlow + "\n" + graph.toString();	
+			writeAnswer(filePath+myMcGillID+".txt",answer);
+			System.out.println(answer);
 			return;
 		}
 
@@ -87,6 +89,13 @@ public class FordFulkerson {
 		for(int i = 0 ; i < nodes.size()-1 ; i++) {
 			Edge edge = graphF.getEdge(nodes.get(i), nodes.get(i+1)) ;
 			edge.weight = bottleNeck;
+		}
+		
+		maxFlow = 0;
+		for(int i = 0; i < graphF.getNbNodes(); i++) {
+			if(graphF.getEdge(source, i)!= null) {
+				maxFlow+=graphF.getEdge(source, i).weight;
+			}
 		}
 
 		while(true) {
@@ -119,6 +128,13 @@ public class FordFulkerson {
 
 			// If no path found, set graph and break
 			if(nodesResidual == null) {
+				// Find maxFlow : flow out of source
+				maxFlow = 0;
+				for(int i = 0; i < graphF.getNbNodes(); i++) {
+					if(graphF.getEdge(source, i)!= null) {
+						maxFlow+=graphF.getEdge(source, i).weight;
+					}
+				}
 				graph=graphF;
 				break;
 			}
@@ -152,9 +168,9 @@ public class FordFulkerson {
 
 			// Find maxFlow : flow out of source
 			maxFlow = 0;
-			for(int i =0; i < destination; i++) {
-				if(graphF.getEdge(0, i)!= null) {
-					maxFlow+=graphF.getEdge(0, i).weight;
+			for(int i =0; i < graphF.getNbNodes(); i++) {
+				if(graphF.getEdge(source, i)!= null) {
+					maxFlow+=graphF.getEdge(source, i).weight;
 				}
 			}
 
