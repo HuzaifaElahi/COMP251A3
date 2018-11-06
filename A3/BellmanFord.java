@@ -1,5 +1,7 @@
 package A3;
 
+import java.util.ArrayList;
+
 public class BellmanFord{
 
 	
@@ -58,6 +60,34 @@ public class BellmanFord{
          *  
          *  When throwing an exception, choose an appropriate one from the ones given above
          */
+
+    	// Initialize
+    	this.source = source;
+    	distances = new int[g.getNbNodes()];
+    	for(int dist : distances) {
+    		dist = Integer.MAX_VALUE;
+    	}
+        predecessors = new int[g.getNbNodes()];
+    	for(int pred : predecessors) {
+    		pred = -1;
+    	}
+    	distances[source] = 0;
+    	    
+    	for(int i = 0 ; i < g.getNbNodes()-1; i++) {
+    		for(Edge e : g.getEdges()) {
+    			relax(e.nodes[0], e.nodes[1], e.weight);
+    		}
+    	}
+    	
+    	// Detect negative weight cycles
+    	for(Edge e : g.getEdges()) {
+			if(distances[e.nodes[1]] > distances[e.nodes[0]] + e.weight) {
+				throw new BellmanFordException("Negative weight cycle");
+				
+			}
+		}
+    
+    	
         
         /* YOUR CODE GOES HERE */
     }
@@ -68,13 +98,34 @@ public class BellmanFord{
          * If not path exists an Exception is thrown
          * Choose appropriate Exception from the ones given 
          */
+    	int [] pathArr = new int[distances.length];
+    	ArrayList<Integer> path = new ArrayList<Integer>();
 
+    	int i = 0;
+    	while(true) {
+    		if(distances[i] != Integer.MAX_VALUE) {
+    			path.add(i);
+    		}
+    		i++;
+    		
+    		if(i == distances.length) {break;}
+    	}
+    	for(int j = 0 ; j < distances.length ; j++) {
+    		pathArr[j] = path.get(j);
+    	}
         /* YOUR CODE GOES HERE (update the return statement as well!) */
         
-        return null;
+        return pathArr;
     }
 
-    public void printPath(int destination){
+    private void relax(int u, int v, int w) {
+		if(distances[v] > distances[u] + w) {
+			distances[v] = distances[u] + w;
+			predecessors[v] = u;
+		}
+	}
+
+	public void printPath(int destination){
         /*Print the path in the format s->n1->n2->destination
          *if the path exists, else catch the Error and 
          *prints it

@@ -79,10 +79,10 @@ public class FordFulkerson {
 		}
 
 		// Find bottleneck
-		int bottleNeck = 99999;
-		ArrayList<Edge> edgesCapabilities = graph.getEdges();
-		for(Edge e : edgesCapabilities) {
-			bottleNeck = Math.min(bottleNeck, e.weight);
+		int bottleNeck = Integer.MAX_VALUE;
+		for(int i = 0 ; i < nodes.size()-1 ; i++) {
+			Edge edge = graphF.getEdge(nodes.get(i), nodes.get(i+1)) ;
+			bottleNeck = Math.min(bottleNeck, edge.weight);
 		}
 
 		// Initial flow instantiated
@@ -101,7 +101,7 @@ public class FordFulkerson {
 			WGraph residue = new WGraph();
 			for(Edge e : edgesGraphF) {
 
-				// Forward edge
+				// Forward edge : add if doesn't exist, else change weight
 				if(e.weight < graph.getEdge(e.nodes[0], e.nodes[1]).weight) {
 					Edge forwardEdge = new Edge(e.nodes[0], e.nodes[1],(graph.getEdge(e.nodes[0], e.nodes[1]).weight - e.weight));
 					if(residue.getEdge(forwardEdge.nodes[0], forwardEdge.nodes[1])==null) {
@@ -112,7 +112,7 @@ public class FordFulkerson {
 					}
 				}
 
-				// Backward edge
+				// Backward edge : add if doesn't exist, else change weight
 				if(e.weight > 0) {
 					Edge backwardEdge = new Edge(e.nodes[1], e.nodes[0],(e.weight));
 					if(residue.getEdge(backwardEdge.nodes[0], backwardEdge.nodes[1])==null) {
@@ -141,10 +141,10 @@ public class FordFulkerson {
 			}
 
 			// Find bottleneck
-			ArrayList<Edge> residueEdges = residue.getEdges();
-			bottleNeck = 9999;
-			for(Edge e : residueEdges) {
-				bottleNeck = Math.min(bottleNeck, e.weight);
+			bottleNeck = Integer.MAX_VALUE;
+			for(int i = 0 ; i < nodesResidual.size()-1 ; i++) {
+				Edge edge = residue.getEdge(nodesResidual.get(i), nodesResidual.get(i+1)) ;
+				bottleNeck = Math.min(bottleNeck, edge.weight);
 			}
 
 			// Augment the Path
